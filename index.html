@@ -53,13 +53,74 @@
             transition: opacity 0.8s ease;
         }
 
-        #terminal-text {
+        .hacker-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+            max-width: 800px;
+        }
+        
+        .hacker-item {
+            width: 70px;
+            height: 70px;
+            border: 2px solid #0f0;
+            opacity: 0.2;
+            transition: opacity 0.1s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 5px #0f0;
+        }
+        .hacker-item.active {
+            opacity: 1;
+            box-shadow: 0 0 20px #0f0, inset 0 0 10px #0f0;
+            border-color: #fff;
+        }
+        .hacker-item img {
+            width: 100%; height: 100%; object-fit: cover; 
+            filter: grayscale(100%) sepia(1) hue-rotate(80deg) brightness(1.2);
+        }
+        .hacker-item .h-name {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: rgba(0,0,0,0.8); color: #0f0; font-size: 0.6rem;
+            text-align: center; padding: 2px 0; font-weight: bold;
+        }
+
+        .progress-bar-container {
+            width: 80%;
+            max-width: 600px;
+            height: 25px;
+            border: 2px solid #0f0;
+            margin-top: 20px;
+            position: relative;
+            box-shadow: 0 0 10px #0f0;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: #0f0;
+            width: 0%;
+            box-shadow: 0 0 15px #0f0;
+            transition: width 0.1s linear;
+        }
+        .progress-text {
+            position: absolute;
+            top: -30px; left: 50%;
+            transform: translateX(-50%);
             font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px #0f0;
+        }
+
+        #terminal-text {
+            font-size: 1.2rem;
             text-align: left;
             white-space: pre-wrap;
             max-width: 800px;
             text-shadow: 0 0 10px #0f0;
             width: 80%;
+            margin-bottom: 20px;
         }
 
         .main-content {
@@ -178,18 +239,18 @@
             vertical-align: middle;
         }
 
-        tr {
+        tbody tr {
             transition: all 0.3s ease;
             opacity: 0; /* For animation */
             transform: translateX(-50px);
         }
 
-        tr.revealed {
+        tbody tr.revealed {
             opacity: 1;
             transform: translateX(0);
         }
 
-        tr:hover {
+        tbody tr:hover {
             background: rgba(0, 255, 204, 0.08);
             box-shadow: inset 0 0 15px rgba(0, 255, 204, 0.2);
         }
@@ -235,6 +296,7 @@
             font-family: 'Share Tech Mono', monospace; /* Hacker font */
         }
 
+        /* Update to truncate texts on main page */
         .bio-data, .life-goal {
             white-space: normal;
             min-width: 200px;
@@ -243,6 +305,11 @@
             color: #dcdcdc;
             font-size: 0.95rem;
             text-align: left;
+            
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* Truncate to 2 lines */
+            -webkit-box-orient: vertical;  
+            overflow: hidden;
         }
 
         .static-date {
@@ -280,13 +347,144 @@
         .status-single { background: rgba(255, 0, 0, 0.2); color: #ff6b6b; border: 1px solid #ff6b6b; }
         .status-married { background: rgba(0, 255, 0, 0.2); color: #51cf66; border: 1px solid #51cf66; }
 
+        /* See More Button inside the cell */
+        .see-more-btn {
+            background: transparent;
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+            color: var(--accent-color);
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            padding: 4px 8px;
+            font-weight: bold;
+            box-shadow: 0 0 5px rgba(0, 255, 204, 0.2);
+            font-family: 'Share Tech Mono', monospace;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+        .see-more-btn:hover {
+            background: var(--accent-color);
+            color: #000;
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+
+        /* Profile Details Modal UI */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: none; 
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: rgba(5, 10, 15, 0.95);
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.3);
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            padding: 2.5rem;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            color: #fff;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px; right: 20px;
+            background: none;
+            border: none;
+            color: #ff0055;
+            font-size: 2rem;
+            cursor: pointer;
+            text-shadow: 0 0 10px #ff0055;
+            transition: transform 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            transform: scale(1.2) rotate(90deg);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(0, 255, 204, 0.3);
+            padding-bottom: 20px;
+        }
+
+        .modal-pic {
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-color);
+            box-shadow: 0 0 20px var(--accent-color);
+            object-fit: cover;
+        }
+
+        .modal-name {
+            font-size: 2rem;
+            color: #fff;
+            text-shadow: 0 0 10px #fff;
+            margin-bottom: 10px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .modal-info-item {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .modal-info-label {
+            color: var(--accent-color);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            font-family: 'Share Tech Mono', monospace;
+            text-shadow: 0 0 5px rgba(0, 255, 204, 0.3);
+        }
+
+        .modal-info-value {
+            color: #dcdcdc;
+            font-family: 'Hind Siliguri', sans-serif;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-color);
+        }
+
     </style>
 </head>
 <body>
 
     <!-- Cyberpunk Intro Screen -->
     <div id="intro-screen">
+        <div class="hacker-grid" id="hacker-grid"></div>
         <div id="terminal-text"></div>
+        <div class="progress-bar-container">
+            <div class="progress-text" id="progress-text">0%</div>
+            <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
     </div>
 
     <div class="main-content" id="main-content">
@@ -300,13 +498,13 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>IDENTIFICATION</th>
-                            <th>BIO_DATA</th>
-                            <th>DOB & AGE</th>
-                            <th>STATUS</th>
-                            <th>BONDING_TIME</th>
-                            <th>MISSION_OBJECTIVE</th>
+                            <th>রোল নং</th>
+                            <th>ছবি ও নাম</th>
+                            <th>বায়ো ডাটা</th>
+                            <th>জন্ম তারিখ ও বয়স</th>
+                            <th>বৈবাহিক অবস্থা</th>
+                            <th>বিয়ের তারিখ ও সময়</th>
+                            <th>জীবনের লক্ষ্য</th>
                         </tr>
                     </thead>
                     <tbody id="friendsTableBody">
@@ -564,6 +762,42 @@
         </div>
     </div>
 
+    <!-- Modal UI for See More -->
+    <div class="modal-overlay" id="profile-modal">
+        <div class="modal-content">
+            <button class="close-btn" id="close-modal-btn">&times;</button>
+            <div class="modal-header">
+                <img src="" alt="Profile" class="modal-pic" id="m-pic">
+                <div>
+                    <div class="modal-name" id="m-name">Name</div>
+                    <div id="m-status"></div>
+                </div>
+            </div>
+            
+            <div class="modal-body">
+                <div class="modal-info-item">
+                    <span class="modal-info-label">DATE OF BIRTH & AGE:</span>
+                    <div class="modal-info-value" id="m-dob"></div>
+                </div>
+                
+                <div class="modal-info-item" id="m-marriage-container">
+                    <span class="modal-info-label">MARRIAGE DATE & DURATION:</span>
+                    <div class="modal-info-value" id="m-marriage"></div>
+                </div>
+
+                <div class="modal-info-item">
+                    <span class="modal-info-label">BIO_DATA:</span>
+                    <div class="modal-info-value" id="m-bio"></div>
+                </div>
+
+                <div class="modal-info-item">
+                    <span class="modal-info-label">MISSION_OBJECTIVE (LIFE GOAL):</span>
+                    <div class="modal-info-value" id="m-goal"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Age and time calculations
         function calculateTimeDifference(dateString) {
@@ -611,15 +845,31 @@
         document.addEventListener('DOMContentLoaded', () => {
             const introScreen = document.getElementById('intro-screen');
             const terminalText = document.getElementById('terminal-text');
+            const hackerGrid = document.getElementById('hacker-grid');
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
             const mainContent = document.getElementById('main-content');
             const rows = document.querySelectorAll('tbody tr');
+
+            // 1. Generate Hacker Grid from Table Data
+            rows.forEach(row => {
+                const imgStr = row.querySelector('.pic-container img').src;
+                const nameStr = row.querySelector('.friend-name').innerText;
+                
+                const gridItem = document.createElement('div');
+                gridItem.className = 'hacker-item';
+                gridItem.innerHTML = `<img src="${imgStr}" alt="scan"><div class="h-name">${nameStr}</div>`;
+                hackerGrid.appendChild(gridItem);
+            });
+
+            const gridItems = document.querySelectorAll('.hacker-item');
 
             const commands = [
                 "ESTABLISHING SECURE CONNECTION...",
                 "BYPASSING FIREWALL...",
                 "ACCESSING FRIENDS_DB...",
                 "DECRYPTING PROFILES...",
-                "ACCESS GRANTED."
+                "SCANNING METADATA..."
             ];
 
             let cmdIndex = 0;
@@ -629,8 +879,29 @@
                 if(cmdIndex < commands.length) {
                     terminalText.innerText += "> " + commands[cmdIndex] + "\n";
                     cmdIndex++;
-                    setTimeout(typeCommand, 300); // speed of terminal lines
-                } else {
+                    setTimeout(typeCommand, 300);
+                }
+            }
+            setTimeout(typeCommand, 100);
+
+            // Fast Progress & Grid Scanning Simulator
+            let progress = 0;
+            const scanInterval = setInterval(() => {
+                // Randomly light up grid items
+                gridItems.forEach(item => item.classList.remove('active'));
+                const randomItem = gridItems[Math.floor(Math.random() * gridItems.length)];
+                if(randomItem) randomItem.classList.add('active');
+
+                // Progress update
+                progress += Math.random() * 4; // Fast increment
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(scanInterval);
+                    gridItems.forEach(item => item.classList.add('active')); // all light up at end
+                    terminalText.innerText += "> ACCESS GRANTED.\n";
+                    progressFill.style.width = '100%';
+                    progressText.innerText = '100%';
+                    
                     // Fade out intro
                     setTimeout(() => {
                         introScreen.style.opacity = '0';
@@ -638,12 +909,28 @@
                             introScreen.style.display = 'none';
                             revealMainInterface();
                         }, 800);
-                    }, 400);
+                    }, 1000);
+                } else {
+                    progressFill.style.width = progress + '%';
+                    progressText.innerText = Math.floor(progress) + '%';
                 }
-            }
+            }, 60); // Fast interval for scanning effect
 
-            // Start intro
-            setTimeout(typeCommand, 300);
+            // Modal elements
+            const modalOverlay = document.getElementById('profile-modal');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+
+            closeModalBtn.addEventListener('click', () => {
+                modalOverlay.classList.remove('show');
+                setTimeout(() => { modalOverlay.style.display = 'none'; }, 300);
+            });
+
+            // Close modal when clicking outside
+            modalOverlay.addEventListener('click', (e) => {
+                if(e.target === modalOverlay) {
+                    closeModalBtn.click();
+                }
+            });
 
             // Reveal Table and run hacker effect
             function revealMainInterface() {
@@ -653,9 +940,57 @@
 
                 // Staggered row reveal
                 rows.forEach((row, index) => {
+                    
+                    // Add See More Button to the second column (Name & Pic) dynamically
+                    const nameCell = row.querySelector('.friend-name').parentElement;
+                    const seeMoreBtn = document.createElement('button');
+                    seeMoreBtn.className = 'see-more-btn';
+                    seeMoreBtn.innerText = '[ PROFILE ]';
+                    seeMoreBtn.style.display = 'none'; // hidden initially
+                    nameCell.appendChild(seeMoreBtn);
+
+                    // Add Event Listener for See More Modal
+                    seeMoreBtn.addEventListener('click', () => {
+                        const picSrc = row.querySelector('.pic-container img').src;
+                        const nameText = row.querySelector('.friend-name').innerText;
+                        const statusHtml = row.querySelector('.status-badge').outerHTML;
+                        
+                        // We use innerText from the DOM elements
+                        const bioText = row.querySelector('.bio-data').innerText;
+                        const lifeGoalText = row.querySelector('.life-goal').innerText;
+                        
+                        const dobStatic = row.querySelectorAll('.static-date')[0].innerText;
+                        const ageCalc = row.querySelector('.age-text').innerText;
+                        
+                        const marriageStatic = row.querySelectorAll('.static-date')[1].innerText;
+                        const marriageCalc = row.querySelector('.marriage-text').innerText;
+
+                        // Populate Modal
+                        document.getElementById('m-pic').src = picSrc;
+                        document.getElementById('m-name').innerText = nameText;
+                        document.getElementById('m-status').innerHTML = statusHtml;
+                        
+                        document.getElementById('m-dob').innerText = dobStatic + " (" + ageCalc + ")";
+                        document.getElementById('m-bio').innerText = bioText;
+                        document.getElementById('m-goal').innerText = lifeGoalText;
+
+                        if (marriageStatic && marriageStatic !== "-") {
+                            document.getElementById('m-marriage-container').style.display = 'block';
+                            document.getElementById('m-marriage').innerText = marriageStatic + " (" + marriageCalc + ")";
+                        } else {
+                            document.getElementById('m-marriage-container').style.display = 'none';
+                        }
+
+                        // Show Modal
+                        modalOverlay.style.display = 'flex';
+                        setTimeout(() => modalOverlay.classList.add('show'), 10);
+                    });
+
+                    // Reveal timings
                     setTimeout(() => {
                         row.classList.add('revealed');
-                        
+                        seeMoreBtn.style.display = 'block'; // show button
+
                         // Hacker text effect on Name
                         const nameEl = row.querySelector('.friend-name');
                         if (nameEl) {
