@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>আমাদের বায়োডাটা - Premium Edition</title>
+    <title>আমাদের বায়োডাটা - Hacker Edition</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
 
         :root {
-            --bg-color: #0f0c29;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --border-color: rgba(255, 255, 255, 0.1);
-            --text-color: #e0e0e0;
+            --bg-color: #050505;
+            --glass-bg: rgba(0, 20, 0, 0.4);
+            --text-color: #0f0;
             --accent-color: #00ffcc;
             --rgb-glow: 0 0 10px #ff00ff, 0 0 20px #00ffff, 0 0 30px #00ff00;
         }
@@ -24,20 +23,58 @@
         }
 
         body {
-            background: linear-gradient(to right, #24243e, #302b63, #0f0c29);
-            color: var(--text-color);
+            background: var(--bg-color);
+            color: #fff;
             min-height: 100vh;
             padding: 2rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             overflow-x: hidden;
+            /* Cyberpunk scanline effect */
+            background-image: 
+                linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* Intro Screen */
+        #intro-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Share Tech Mono', monospace;
+            color: #0f0;
+            transition: opacity 0.8s ease;
+        }
+
+        #terminal-text {
+            font-size: 1.5rem;
+            text-align: left;
+            white-space: pre-wrap;
+            max-width: 800px;
+            text-shadow: 0 0 10px #0f0;
+            width: 80%;
+        }
+
+        .main-content {
+            opacity: 0;
+            visibility: hidden;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: opacity 1s ease 0.5s;
         }
 
         .header {
             text-align: center;
             margin-bottom: 3rem;
-            animation: fadeInDown 1s ease-out;
         }
 
         .header h1 {
@@ -46,8 +83,17 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             text-shadow: var(--rgb-glow);
-            position: relative;
-            display: inline-block;
+            font-family: 'Share Tech Mono', monospace;
+            animation: glitch 1.5s infinite;
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 2px 0 #ff00ff, -2px 0 #00ffff; }
+            20% { text-shadow: -2px 0 #ff00ff, 2px 0 #00ffff; }
+            40% { text-shadow: 2px 0 #00ff00, -2px 0 #ff0000; }
+            60% { text-shadow: -2px 0 #00ff00, 2px 0 #ff0000; }
+            80% { text-shadow: 2px 0 #00ffff, -2px 0 #ff00ff; }
+            100% { text-shadow: -2px 0 #00ffff, 2px 0 #ff00ff; }
         }
 
         /* RGB Border Animation wrapper */
@@ -59,8 +105,9 @@
             border-radius: 15px;
             background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
             background-size: 400%;
-            animation: glowing 15s linear infinite;
+            animation: glowing 10s linear infinite;
             box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+            overflow: hidden;
         }
 
         @keyframes glowing {
@@ -70,10 +117,37 @@
         }
 
         .content-container {
-            background: rgba(15, 12, 41, 0.95);
+            background: rgba(5, 10, 15, 0.95);
             border-radius: 12px;
             overflow-x: auto;
             backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        /* Hacker Scanner line */
+        .scanner-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #0f0;
+            box-shadow: 0 0 15px #0f0, 0 0 30px #0f0;
+            animation: scan 4s linear infinite;
+            display: none;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .main-content.active .scanner-line {
+            display: block;
+        }
+
+        @keyframes scan {
+            0% { top: 0; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
         }
 
         table {
@@ -83,7 +157,7 @@
         }
 
         thead {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(0, 255, 204, 0.1);
         }
 
         th {
@@ -92,7 +166,9 @@
             font-weight: 600;
             font-size: 1.1rem;
             color: var(--accent-color);
-            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 2px solid rgba(0, 255, 204, 0.3);
+            text-shadow: 0 0 5px rgba(0, 255, 204, 0.5);
+            font-family: 'Share Tech Mono', monospace;
         }
 
         td {
@@ -100,19 +176,24 @@
             text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             vertical-align: middle;
-            transition: all 0.3s ease;
         }
 
         tr {
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
+            opacity: 0; /* For animation */
+            transform: translateX(-50px);
+        }
+
+        tr.revealed {
+            opacity: 1;
+            transform: translateX(0);
         }
 
         tr:hover {
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: inset 0 0 15px rgba(0, 255, 255, 0.1);
+            background: rgba(0, 255, 204, 0.08);
+            box-shadow: inset 0 0 15px rgba(0, 255, 204, 0.2);
         }
 
-        /* Profile Picture Style */
         .pic-container {
             width: 70px;
             height: 70px;
@@ -122,10 +203,21 @@
             border: 2px solid var(--accent-color);
             box-shadow: 0 0 10px var(--accent-color);
             transition: transform 0.3s ease;
+            filter: grayscale(100%) brightness(0.5);
+        }
+
+        tr.revealed .pic-container {
+            animation: scanPic 1.5s forwards;
+        }
+
+        @keyframes scanPic {
+            0% { filter: grayscale(100%) brightness(0.5); box-shadow: 0 0 30px #0f0; }
+            50% { filter: grayscale(50%) brightness(1.5); box-shadow: 0 0 15px #0ff; }
+            100% { filter: grayscale(0%) brightness(1); box-shadow: 0 0 10px var(--accent-color); }
         }
 
         tr:hover .pic-container {
-            transform: scale(1.1) rotate(5deg);
+            transform: scale(1.1);
         }
 
         .pic-container img {
@@ -140,9 +232,9 @@
             color: #fff;
             text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
             font-size: 0.95rem;
+            font-family: 'Share Tech Mono', monospace; /* Hacker font */
         }
 
-        /* Text Data Styles */
         .bio-data, .life-goal {
             white-space: normal;
             min-width: 200px;
@@ -166,6 +258,7 @@
             color: #ff00cc;
             font-weight: 600;
             text-shadow: 0 0 5px rgba(255, 0, 204, 0.4);
+            font-family: 'Share Tech Mono', monospace;
         }
 
         .row-num {
@@ -173,6 +266,7 @@
             font-weight: bold;
             color: #ffcc00;
             text-shadow: 0 0 8px rgba(255, 204, 0, 0.6);
+            font-family: 'Share Tech Mono', monospace;
         }
 
         .status-badge {
@@ -183,50 +277,39 @@
             display: inline-block;
         }
 
-        .status-single {
-            background: rgba(255, 0, 0, 0.2);
-            color: #ff6b6b;
-            border: 1px solid #ff6b6b;
-        }
+        .status-single { background: rgba(255, 0, 0, 0.2); color: #ff6b6b; border: 1px solid #ff6b6b; }
+        .status-married { background: rgba(0, 255, 0, 0.2); color: #51cf66; border: 1px solid #51cf66; }
 
-        .status-married {
-            background: rgba(0, 255, 0, 0.2);
-            color: #51cf66;
-            border: 1px solid #51cf66;
-        }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .table-wrapper { border-radius: 8px; padding: 2px; }
-        }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>বন্ধু মহল 🚀</h1>
+    <!-- Cyberpunk Intro Screen -->
+    <div id="intro-screen">
+        <div id="terminal-text"></div>
     </div>
 
-    <div class="table-wrapper">
-        <div class="content-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>রোল নং</th>
-                        <th>ছবি ও নাম</th>
-                        <th>বায়ো ডাটা</th>
-                        <th>জন্ম তারিখ ও বয়স</th>
-                        <th>বৈবাহিক অবস্থা</th>
-                        <th>বিয়ের তারিখ ও সময়</th>
-                        <th>জীবনের লক্ষ্য</th>
-                    </tr>
-                </thead>
-                <tbody id="friendsTableBody">
+    <div class="main-content" id="main-content">
+        <div class="header">
+            <h1>SYSTEM.DATABASE_ACCESS // L3G3NDS</h1>
+        </div>
+
+        <div class="table-wrapper">
+            <div class="content-container">
+                <div class="scanner-line"></div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>IDENTIFICATION</th>
+                            <th>BIO_DATA</th>
+                            <th>DOB & AGE</th>
+                            <th>STATUS</th>
+                            <th>BONDING_TIME</th>
+                            <th>MISSION_OBJECTIVE</th>
+                        </tr>
+                    </thead>
+                    <tbody id="friendsTableBody">
                     
                     <!-- Friend 1 -->
                     <tr>
@@ -398,7 +481,7 @@
                         </td>
                         <td class="life-goal">সুখী একটি পরিবার ও শান্তি।</td>
                     </tr>
-                    <!-- Friend 8 -->
+                    <!-- Friend 9 -->
                     <tr>
                         <td class="row-num">9</td>
                         <td>
@@ -417,7 +500,7 @@
                         </td>
                         <td class="life-goal">সুখী একটি পরিবার ও শান্তি।</td>
                     </tr>
-                    <!-- Friend 8 -->
+                    <!-- Friend 10 -->
                     <tr>
                         <td class="row-num">10</td>
                         <td>
@@ -436,7 +519,7 @@
                         </td>
                         <td class="life-goal">সুখী একটি পরিবার ও শান্তি।</td>
                     </tr>
-                    <!-- Friend 8 -->
+                    <!-- Friend 11 -->
                     <tr>
                         <td class="row-num">11</td>
                         <td>
@@ -454,7 +537,8 @@
                             <div class="calculated-text marriage-text" data-marriage="2023-10-15">সময় হিসাব হচ্ছে...</div>
                         </td>
                         <td class="life-goal">সুখী একটি পরিবার ও শান্তি।</td>
-                        <!-- Friend 8 -->
+                    </tr>
+                    <!-- Friend 12 -->
                     <tr>
                         <td class="row-num">12</td>
                         <td>
@@ -473,21 +557,19 @@
                         </td>
                         <td class="life-goal">সুখী একটি পরিবার ও শান্তি।</td>
                     </tr>
-                    </tr>
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script>
-        // Calculate Time Difference (Years, Months, Days)
+        // Age and time calculations
         function calculateTimeDifference(dateString) {
             if (!dateString) return null;
-            
             const targetDate = new Date(dateString);
             const today = new Date();
-            
             if (isNaN(targetDate)) return null;
 
             let years = today.getFullYear() - targetDate.getFullYear();
@@ -496,43 +578,120 @@
 
             if (days < 0) {
                 months--;
-                // Get days in previous month
                 days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
             }
             if (months < 0) {
                 years--;
                 months += 12;
             }
-
             return { years, months, days };
         }
 
-        // On Page Load, calculate all ages and marriage durations automatically
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            // Calculate Ages
-            const ageElements = document.querySelectorAll('.age-text');
-            ageElements.forEach(el => {
-                const dob = el.getAttribute('data-dob');
-                if (dob) {
-                    const diff = calculateTimeDifference(dob);
-                    if (diff) {
-                        el.innerText = `বয়স: ${diff.years} বছর, ${diff.months} মাস, ${diff.days} দিন`;
+        // Hacking Text Effect Function
+        function hackerTextEffect(element, finalString) {
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*";
+            let iterations = 0;
+            element.style.opacity = 1;
+            const interval = setInterval(() => {
+                element.innerText = finalString.split("").map((letter, index) => {
+                    if (index < iterations) {
+                        return finalString[index];
                     }
+                    return letters[Math.floor(Math.random() * letters.length)];
+                }).join("");
+                
+                if (iterations >= finalString.length) {
+                    clearInterval(interval);
+                    element.innerText = finalString;
                 }
-            });
+                iterations += 1/2; // Adjust speed
+            }, 30);
+        }
 
-            // Calculate Marriage Durations
-            const marriageElements = document.querySelectorAll('.marriage-text');
-            marriageElements.forEach(el => {
-                const mDate = el.getAttribute('data-marriage');
-                if (mDate) {
-                    const diff = calculateTimeDifference(mDate);
-                    if (diff) {
-                        el.innerText = `বিবাহিত সময়: ${diff.years} বছর, ${diff.months} মাস, ${diff.days} দিন`;
-                    }
+        document.addEventListener('DOMContentLoaded', () => {
+            const introScreen = document.getElementById('intro-screen');
+            const terminalText = document.getElementById('terminal-text');
+            const mainContent = document.getElementById('main-content');
+            const rows = document.querySelectorAll('tbody tr');
+
+            const commands = [
+                "ESTABLISHING SECURE CONNECTION...",
+                "BYPASSING FIREWALL...",
+                "ACCESSING FRIENDS_DB...",
+                "DECRYPTING PROFILES...",
+                "ACCESS GRANTED."
+            ];
+
+            let cmdIndex = 0;
+            
+            // Terminal Typing Effect
+            function typeCommand() {
+                if(cmdIndex < commands.length) {
+                    terminalText.innerText += "> " + commands[cmdIndex] + "\n";
+                    cmdIndex++;
+                    setTimeout(typeCommand, 300); // speed of terminal lines
+                } else {
+                    // Fade out intro
+                    setTimeout(() => {
+                        introScreen.style.opacity = '0';
+                        setTimeout(() => {
+                            introScreen.style.display = 'none';
+                            revealMainInterface();
+                        }, 800);
+                    }, 400);
                 }
-            });
+            }
+
+            // Start intro
+            setTimeout(typeCommand, 300);
+
+            // Reveal Table and run hacker effect
+            function revealMainInterface() {
+                mainContent.style.visibility = 'visible';
+                mainContent.style.opacity = '1';
+                mainContent.classList.add('active');
+
+                // Staggered row reveal
+                rows.forEach((row, index) => {
+                    setTimeout(() => {
+                        row.classList.add('revealed');
+                        
+                        // Hacker text effect on Name
+                        const nameEl = row.querySelector('.friend-name');
+                        if (nameEl) {
+                            const originalName = nameEl.innerText;
+                            hackerTextEffect(nameEl, originalName);
+                        }
+
+                        // Calculate Age with hacker effect
+                        const ageEl = row.querySelector('.age-text');
+                        if (ageEl) {
+                            const dob = ageEl.getAttribute('data-dob');
+                            if(dob) {
+                                const diff = calculateTimeDifference(dob);
+                                if(diff) hackerTextEffect(ageEl, `বয়স: ${diff.years} বছর, ${diff.months} মাস, ${diff.days} দিন`);
+                            }
+                        }
+
+                        // Calculate Marriage with hacker effect
+                        const marriageEl = row.querySelector('.marriage-text');
+                        if (marriageEl) {
+                            const mDate = marriageEl.getAttribute('data-marriage');
+                            if(mDate) {
+                                const diff = calculateTimeDifference(mDate);
+                                if(diff) {
+                                    hackerTextEffect(marriageEl, `সময়: ${diff.years} বছর, ${diff.months} মাস, ${diff.days} দিন`);
+                                } else {
+                                    marriageEl.innerText = "";
+                                }
+                            } else {
+                                marriageEl.innerText = "";
+                            }
+                        }
+
+                    }, 200 + (index * 250)); // Delay between each row sliding in
+                });
+            }
         });
     </script>
 </body>
